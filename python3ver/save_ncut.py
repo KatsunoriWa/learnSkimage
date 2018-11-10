@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=C0103
+import pathlib
 from skimage import io, segmentation, color
 from skimage.future import graph
 
@@ -15,10 +16,16 @@ def plotNcut(img):
     return color.label2rgb(labels2, img, kind='avg'), labels2
 
 if __name__ == "__main__":
-    import glob
-    for i, name in enumerate(glob.glob("*/*.png")):
-        img = io.imread(name)
+    import cv2
+    oDir = pathlib.Path("out")
+    if not oDir.is_dir():
+       oDir.mkdir() 
+    for p in pathlib.Path("../images").glob("*.png"):
+        print(p)
+        
+        oname = oDir.joinpath(p.with_suffix(".jpg").name)
+        img = io.imread(p)
         out, _ = plotNcut(img)
-        io.imshow(out)
-        io.show()
-        io.imsave("%02d.png" % i,  out)
+        io.imsave(str(oname), out)
+        print(oname)
+
